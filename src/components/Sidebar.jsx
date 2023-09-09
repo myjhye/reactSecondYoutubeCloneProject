@@ -3,7 +3,7 @@ import { categories } from "../utils/constants";
 
 const selectedCategory = 'New';
 
-export default function Sidebar() {
+export default function Sidebar({ selectedCategory, setSelectedCategory }) {
 
     return (
         <Stack
@@ -16,6 +16,7 @@ export default function Sidebar() {
         >
             {categories.map((category) => (
                 <button
+                    onClick={() => setSelectedCategory(category.name)}
                     className="category-btn"
                     style={{
                         background: category.name === selectedCategory && '#FC1503',
