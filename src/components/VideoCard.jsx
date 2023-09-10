@@ -7,12 +7,17 @@ import { CheckCircle } from "@mui/icons-material";
 export default function VideoCard({ video: { id: { videoId }, snippet } }) {
 
     return (
+        // 카드 스타일 설정
         <Card 
+            // 화면 크기에 따라 너비 조정
             sx={{ width: { md: '320px', xs: '100%' },
+            // 그림자 없음
             boxShadow: 'none',
+            // 테두리 없음
             borderRadius: 0,
         }}>
             <Link to={videoId ? `/video/${videoId}` : demoVideoUrl}>
+                {/* 비디오 썸네일 */}
                 <CardMedia 
                     image={snippet?.thumbnails?.high?.url}
                     alt={snippet?.title}
@@ -21,6 +26,7 @@ export default function VideoCard({ video: { id: { videoId }, snippet } }) {
             </Link>
             <CardContent sx={{ backgroundColor: '#1e1e1e', height: '106px' }}>
                 <Link to={videoId ? `/video/${videoId}` : demoVideoUrl}>
+                    {/* 비디오 제목 */}
                     <Typography
                         variant='subtitle1'
                         fontweight='bold'
@@ -30,6 +36,7 @@ export default function VideoCard({ video: { id: { videoId }, snippet } }) {
                     </Typography>
                 </Link>
                 <Link to={snippet ?.channelId ? `/channel/${snippet?.channelId}` : demoVideoUrl}>
+                    {/* 채널 제목 & 인증 뱃지 */}
                     <Typography
                         variant='subtitle2'
                         fontweight='bold'

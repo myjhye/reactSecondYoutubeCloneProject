@@ -11,8 +11,6 @@ export default function ChannelDetail() {
     const [channelDetail, setChannelDetail] = useState(null);
     const [videos, setVideos] = useState([]);
 
-    console.log(channelDetail, videos);
-
     useEffect(() => {
         fetchFromAPI(`channels?part="snippet&id=${id}`)
             .then((data) => setChannelDetail(data?.items[0]));
@@ -23,6 +21,8 @@ export default function ChannelDetail() {
 
     return (
         <Box minHeight='95vh'>
+
+            {/* 채널 카드 */}
             <Box>
                 <div 
                     style={{
@@ -36,6 +36,8 @@ export default function ChannelDetail() {
                     marginTop='-110px'
                 /> 
             </Box>
+
+            {/* 비디오 목록 */}
             <Box display='flex' p='2'>
                 <Box sx={{ mr: { sm: '100px' }}} />
                     <Videos videos={videos} />
