@@ -26,7 +26,7 @@ export default function VideoCard({ video: { id: { videoId }, snippet } }) {
                         fontweight='bold'
                         color='#FFF'
                     >
-                        {snippet?.title.slice(0, 60) || demoVideoTitle.splice(0, 60)}
+                        {snippet?.title.slice(0, 60) || demoVideoTitle.slice(0, 60)}
                     </Typography>
                 </Link>
                 <Link to={snippet ?.channelId ? `/channel/${snippet?.channelId}` : demoVideoUrl}>
