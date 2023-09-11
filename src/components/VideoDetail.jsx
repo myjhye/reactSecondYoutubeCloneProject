@@ -5,11 +5,13 @@ import { Link, useParams } from "react-router-dom";
 import { fetchFromAPI } from "../utils/fetchFromAPI";
 import { CheckCircle } from "@mui/icons-material";
 import Videos from "./Videos";
+import VideoComment from "./VideoComment";
 
 export default function VideoDetail() {
     const { id } = useParams();
     const [videoDetail, setVideoDetail] = useState(null);
     const [relatedVideos, setRelatedVideos] = useState();
+    const [comment, setComment] = useState([]);
 
     useEffect(() => {
         // 영상 관련 데이터들 => title, channelId, channelTitle, viewCount
@@ -19,6 +21,11 @@ export default function VideoDetail() {
         // 연관 비디오 데이터
         fetchFromAPI(`search?part=snippet&relatedToVideoId=${id}`)
             .then((data) => setRelatedVideos(data.items));
+
+        // 채널의 댓글을 가져오도록 수정
+        fetchFromAPI(`commentThreads?videoId=${id}`)
+            .then((data) => setComment(data?.items));
+
     }, [id]);
 
     if (!videoDetail?.snippet) {
@@ -74,6 +81,10 @@ export default function VideoDetail() {
                     <Videos videos={relatedVideos} direction="column" />
                 </Box>
             </Stack>
+            <Box px={2} py={2} sx={{ backgroundColor: 'white' }}>
+                {/* 댓글 */}
+                <VideoComment comment={comment} />
+            </Box>
         </Box>
     );
 }

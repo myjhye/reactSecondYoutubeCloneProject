@@ -10,7 +10,7 @@ export default function Videos({videos, direction}) {
 
     return (
         <Stack 
-            // 비디오, 채널카드 가로 배치 => 관련 비디오에서는 세로(column) 배치 => direction
+            // 비디오, 채널카드 가로(row) 배치 => 관련 비디오에서는 세로(column) 배치 => direction
             direction={direction || 'row'}
             // 컨테이너 내에서 아이템들을 줄 바꿈 할 수 있음
             flexWrap='wrap'

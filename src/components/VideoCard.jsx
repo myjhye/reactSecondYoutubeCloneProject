@@ -6,6 +6,17 @@ import { CheckCircle } from "@mui/icons-material";
 
 export default function VideoCard({ video: { id: { videoId }, snippet } }) {
 
+    // &#39; => ' 변환 
+    function decodeHTML(html) {
+        var txt = document.createElement('textarea');
+        
+        // 디코딩 처리
+        txt.innerHTML = html;
+
+        // 디코딩된 텍스트 반환
+        return txt.value;
+    }
+
     return (
         // 카드 스타일 설정
         <Card 
@@ -32,7 +43,7 @@ export default function VideoCard({ video: { id: { videoId }, snippet } }) {
                         fontweight='bold'
                         color='#FFF'
                     >
-                        {snippet?.title.slice(0, 60) || demoVideoTitle.slice(0, 60)}
+                        {decodeHTML(snippet?.title.slice(0, 60) || demoVideoTitle.slice(0, 60))}
                     </Typography>
                 </Link>
                 <Link to={snippet ?.channelId ? `/channel/${snippet?.channelId}` : demoVideoUrl}>

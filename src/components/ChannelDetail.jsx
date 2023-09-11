@@ -7,16 +7,24 @@ import { Videos } from ".";
 
 export default function ChannelDetail() {
 
+    // url에서 파라미터 'id' 가져옴
     const { id } = useParams();
+
+    // 채널 정보
     const [channelDetail, setChannelDetail] = useState(null);
+    
+    // 채널의 비디오 목록  
     const [videos, setVideos] = useState([]);
 
     useEffect(() => {
-        fetchFromAPI(`channels?part="snippet&id=${id}`)
+        // 채널 정보 데이터
+        fetchFromAPI(`channels?id=${id}`)
             .then((data) => setChannelDetail(data?.items[0]));
 
+        // 채널 비디오 목록 데이터
         fetchFromAPI(`search?channelId=${id}&part=snippet&order=date`)
             .then((data) => setVideos(data?.items));
+
     }, [id]);
 
     return (
