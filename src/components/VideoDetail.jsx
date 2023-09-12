@@ -26,6 +26,8 @@ export default function VideoDetail() {
         fetchFromAPI(`commentThreads?videoId=${id}`)
             .then((data) => setComment(data?.items));
 
+        console.log(comment);
+
     }, [id]);
 
     if (!videoDetail?.snippet) {
@@ -83,7 +85,7 @@ export default function VideoDetail() {
             </Stack>
             <Box px={2} py={2} sx={{ backgroundColor: 'white' }}>
                 {/* 댓글 */}
-                <VideoComment comment={comment} />
+                <VideoComment comments={comment} />
             </Box>
         </Box>
     );
