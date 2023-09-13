@@ -10,9 +10,9 @@ export default function ChannelCard({ channelDetail, marginTop, smallImage }) {
         if (!count) {
             return '';
         }
-        
+    
         count = parseInt(count);
-        
+    
         if (count >= 10000) {
             if (count % 10000 === 0) {
                 // 만 단위로 정확하게 나누어 떨어지면 "X만" 형식으로 표시
@@ -23,12 +23,18 @@ export default function ChannelCard({ channelDetail, marginTop, smallImage }) {
             }
         } else if (count >= 1000) {
             // 천 단위로 "X천" 형식으로 표시
-            return (count / 1000) + '천';
+            if (count % 1000 === 0) {
+                return (count / 1000) + '천';
+            } else {
+                // 천 단위로 정확하게 나누어 떨어지지 않으면 소수점 첫째 자리까지 표시
+                return (count / 1000).toFixed(1) + '천';
+            }
         } else {
             // 그 외의 경우는 그냥 숫자 표시
             return count.toString();
         }
     }
+    
     
     return (
         <Box
@@ -69,7 +75,12 @@ export default function ChannelCard({ channelDetail, marginTop, smallImage }) {
                     {/* 구독자 수 */}
                     {channelDetail?.statistics?.subscriberCount && (
                         <Typography>
-                            {formatNumberWithUnit(channelDetail?.statistics?.subscriberCount)}명
+                            구독자 {formatNumberWithUnit(channelDetail?.statistics?.subscriberCount)}명
+                        </Typography>
+                    )}
+                    {channelDetail?.statistics?.videoCount && (
+                        <Typography>
+                           동영상 {formatNumberWithUnit(channelDetail?.statistics?.videoCount)}개
                         </Typography>
                     )}
                 </CardContent>

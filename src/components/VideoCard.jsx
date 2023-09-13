@@ -24,8 +24,8 @@ export default function VideoCard({ video: { id: { videoId }, snippet } }) {
             sx={{ width: { md: '320px', xs: '100%' },
             // 그림자 없음
             boxShadow: 'none',
-            // 테두리 없음
-            borderRadius: 0,
+            // 테두리
+            borderRadius: '15px',
         }}>
             <Link to={videoId ? `/video/${videoId}` : demoVideoUrl}>
                 {/* 비디오 썸네일 */}

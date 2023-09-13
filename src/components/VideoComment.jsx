@@ -23,6 +23,8 @@ const likeIconStyle = {
 };
 
 export default function VideoComment({ comments }) {
+  
+  
   function decodeHTML(html) {
     var txt = document.createElement('textarea');
     txt.innerHTML = html;
