@@ -63,7 +63,7 @@ export default function Feed() {
                 
                 {/* 선택한 카테고리 텍스트*/}
                 <Typography variant='h4' fontWeight='bold' mb={2} sx={{color: 'white'}}>
-                    {selectedCategory} <span style={{ color: '#F31503'}}>videos</span>
+                    {selectedCategory}
                 </Typography>
 
                 {/* 비디오 목록 */}
