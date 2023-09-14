@@ -68,14 +68,15 @@ export default function SearchBar() {
 
 
 
-  // 쿠키에서 검색 기록 로드
+
+  // 쿠키에서 검색 기록 로드 => 검색 기록 쿠키 가져와서 배열에 추가
   const loadSearchHistory = () => {
     
     // searchHistory 이름의 쿠키 가져옴 
     const storedHistory = getCookie("searchHistory");
     
-    // 가져온 쿠키가 존재하면 아래 기능 실행
     if (storedHistory) {
+      // 가져온 쿠키('검색어1, 검색어2, 검색어3')를 ,로 분리해서 검색 기록에 추가
       setSearchHistory(storedHistory.split(","));
     }
 
@@ -84,22 +85,30 @@ export default function SearchBar() {
 
 
 
-  // Load search history from cookies when the component mounts
+  // 컴포넌트 마운트 될 때 loadSearchHistory 함수 실행 => 검색 기록 쿠키 가져와서 배열에 추가
   useEffect(() => {
     loadSearchHistory();
   }, []);
 
-  // Function to handle clicking on the input
+
+
+
+  // 검색 창 클릭 시 검색 기록 창 열기
   const handleInputClick = () => {
     setIsSearchHistoryOpen(true);
   };
 
-  // Function to handle clicking outside the input to close the search history
+
+
+  // 검색 창 외부 클릭 시 검색 기록 창 닫기
   const handleOutsideClick = (e) => {
-    if (inputRef.current && !inputRef.current.contains(e.target)) {
+    if (!inputRef.current || !inputRef.current.contains(e.target)) {
       setIsSearchHistoryOpen(false);
     }
   };
+  
+
+
 
   useEffect(() => {
     document.addEventListener("click", handleOutsideClick);
@@ -108,46 +117,58 @@ export default function SearchBar() {
     };
   }, []);
 
-  // Function to handle submitting the search
+
+
+// 검색 실행
 const handleSubmit = (e) => {
   e.preventDefault();
 
   if (searchTerm) {
-    // Add the new search term to the existing search history
-    const updatedHistory = [...searchHistory, searchTerm];
+    
+    // 중복 검사 : 목록에 이미 있는 검색 단어인지 확인
+    if(!searchHistory.includes(searchTerm)) {
+      
+      // 현재 검색어를 검색 기록에 추가 => 최근 검색 단어가 위로 가게
+      const updatedHistory = [searchTerm, ...searchHistory];
 
-    // Save the updated search history to cookies
-    setCookie("searchHistory", updatedHistory.join(","), 30); // Store for 30 days
+      // 업데이트된 검색 기록을 쿠키에 30일 동안 저장 => ,로 여러 데이터를 한 배열에 넣음
+      setCookie("searchHistory", updatedHistory.join(","), 30);
 
-    // Update the search history state
-    setSearchHistory(updatedHistory);
+      // 새 검색 단어가 검색 기록에 추가된 것을 화면에 반영
+      setSearchHistory(updatedHistory);
+    
+    }
 
-    // Output search history to the console
-    console.log("Search History:", updatedHistory);
-
-    // Navigate to the search results page
+    // 검색 결과 페이지로 이동
     navigate(`/search/${searchTerm}`);
 
-    // Clear the search term
-    setSearchTerm("");
-
-    // Close the search history box after submitting a search
+    // 검색 기록 창 닫기
     setIsSearchHistoryOpen(false);
   }
 };
 
 
-  // Function to handle clicking on a search history item
+  // 검색 기록 항목 클릭 시 해당 검색어로 검색 실행
   const handleHistoryClick = (term) => {
+    
     setSearchTerm(term);
-    handleSubmit();
+    navigate(`/search/${term}`);
   };
 
-  // Function to handle deleting a single search history item
-  const handleDeleteHistory = (term) => {
+
+  // 단일 검색 기록 항목 삭제
+  const handleDeleteHistory = (term, e) => {
+
+    // 삭제 버튼 클릭 시에도 기록 창이 닫히지 않음
+    e.stopPropagation();
+    
+    // 클릭한 항목 필터링 해서 제거
     const updatedHistory = searchHistory.filter((item) => item !== term);
     setSearchHistory(updatedHistory);
-    setCookie("searchHistory", updatedHistory.join(","), 30); // Update the cookie
+
+    // 업데이트 된 검색 기록 쿠키에 저장
+    setCookie("searchHistory", updatedHistory.join(","), 30); 
+  
   };
 
 
@@ -167,7 +188,7 @@ const handleSubmit = (e) => {
           paddingLeft: "16px",
           boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
           maxWidth: "500px",
-          backgroundColor: "#fff", // 배경색 추가
+          backgroundColor: "#fff", 
         }}
       >
         <InputBase
@@ -175,8 +196,8 @@ const handleSubmit = (e) => {
           placeholder="검색"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          onClick={handleInputClick} // Show search history when input is clicked
-          inputRef={inputRef} // Reference to the input element
+          onClick={handleInputClick} // 클릭 시 검색 기록 창 열기 
+          inputRef={inputRef} 
           sx={{
             flex: 1,
             marginLeft: "8px",
@@ -190,47 +211,57 @@ const handleSubmit = (e) => {
       {isSearchHistoryOpen && searchHistory.length > 0 && (
         <div
             style={{
-            position: "absolute",
-            top: "100%",
-            left: 0,
-            zIndex: 1,
-            background: "white",
-            border: "1px solid #ccc",
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-            minWidth: "100%",
+              position: "absolute",
+              top: "100%",
+              left: 0,
+              zIndex: 1,
+              background: "white",
+              border: "1px solid #ccc",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+              minWidth: "100%",
             }}
         >
             {searchHistory.map((term, index) => (
             <div
                 key={index}
+                className="history-item"
                 style={{
-                display: "flex",
-                alignItems: "center",
-                padding: "8px 16px", // Add padding to the entire item container
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "8px 16px", 
                 }}
             >
-                <BsArrowClockwise />
+                <BsArrowClockwise 
+                  style={{ cursor: "pointer" }}   
+                  onClick={() => handleHistoryClick(term)} 
+                />
+
                 <div
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    flex: 1, // Make this container flex and take up available space
-                }}
+                  style={{
+                      display: "flex",
+                      alignItems: "center",
+                      flex: 1, 
+                  }}
                 >
                 <Typography
                     variant="body2"
-                    sx={{ cursor: "pointer", color: "blue" }}
-                    onClick={() => handleHistoryClick(term)}
                 >
                     {term}
                 </Typography>
                 </div>
-                <IconButton
-                    onClick={() => handleDeleteHistory(term)}
-                    sx={{ padding: "4px" }}
+                <Typography
+                  onClick={(e) => handleDeleteHistory(term, e)}
+                  sx={{ 
+                      padding: "4px", 
+                      color: "blue", 
+                      cursor: 'pointer',
+                      '&:hover': {
+                        textDecoration: 'underline', // 마우스 커서를 가져갈 때 밑줄 스타일 추가
+                      },
+                    }}
                 >
-                <DeleteIcon />
-                </IconButton>
+                  삭제
+                </Typography>
             </div>
             ))}
         </div>
