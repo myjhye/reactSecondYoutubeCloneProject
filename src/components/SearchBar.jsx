@@ -5,41 +5,84 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { BsArrowClockwise } from 'react-icons/bs';
 
-// Function to set a cookie with a given name and value
+
+// 쿠키 이름, 값(검색 단어)을 가지고 쿠키 생성
 function setCookie(name, value, days) {
+  
+  // 현재 날짜
   const date = new Date();
+  
+  // (밀리초로 변환된) 현재 날짜에 유효기간(days)을 밀리초로 변환해서 더함 => 현재 날짜로부터 유효 기간이 얼마나 남았나 계산
   date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+  
+  // 쿠키 만료 날짜 설정 => 유효 기간 후의 날짜와 시간
   const expires = "expires=" + date.toUTCString();
+  
+  // 쿠키를 브라우저에 설정 => 쿠키 이름, 값(검색 단어), 쿠키 만료 날짜
   document.cookie = name + "=" + value + "; " + expires + "; path=/";
+
 }
 
-// Function to get the value of a cookie by name
+
+
+
+// 가져올 쿠키 값 반환
 function getCookie(name) {
+
+  // 모든 쿠키를 문자열로 가져와서 ;로 분리
   const cookies = document.cookie.split("; ");
+  
+  // 모든 쿠키를 순회하며 name에 해당하는 쿠키 찾음
   for (let i = 0; i < cookies.length; i++) {
+    
     const cookie = cookies[i].split("=");
+    
+    // name과 일치하는 쿠키를 찾으면 해당 값 반환
     if (cookie[0] === name) {
       return cookie[1];
     }
   }
+
+  // name에 해당하는 쿠키 찾지 못하면 빈 문자열 반환
   return "";
 }
 
+
+
+
 export default function SearchBar() {
+
+  // 검색 단어
   const [searchTerm, setSearchTerm] = useState("");
+  
+  // 검색 기록
   const [searchHistory, setSearchHistory] = useState([]);
-  const [isSearchHistoryOpen, setIsSearchHistoryOpen] = useState(false); // Track visibility of the search history
+
+  // 검색 기록 창 열림 여부
+  const [isSearchHistoryOpen, setIsSearchHistoryOpen] = useState(false);
+  
   const navigate = useNavigate();
 
+  // input element 참조
   const inputRef = useRef(null);
 
-  // Function to load search history from cookies
+
+
+  // 쿠키에서 검색 기록 로드
   const loadSearchHistory = () => {
+    
+    // searchHistory 이름의 쿠키 가져옴 
     const storedHistory = getCookie("searchHistory");
+    
+    // 가져온 쿠키가 존재하면 아래 기능 실행
     if (storedHistory) {
       setSearchHistory(storedHistory.split(","));
     }
+
   };
+
+
+
 
   // Load search history from cookies when the component mounts
   useEffect(() => {
@@ -66,26 +109,33 @@ export default function SearchBar() {
   }, []);
 
   // Function to handle submitting the search
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const handleSubmit = (e) => {
+  e.preventDefault();
 
-    if (searchTerm) {
-      // Save the search term to cookies
-      setCookie("searchHistory", searchTerm, 30); // Store for 30 days
+  if (searchTerm) {
+    // Add the new search term to the existing search history
+    const updatedHistory = [...searchHistory, searchTerm];
 
-      // Update the search history state
-      setSearchHistory([...searchHistory, searchTerm]);
+    // Save the updated search history to cookies
+    setCookie("searchHistory", updatedHistory.join(","), 30); // Store for 30 days
 
-      // Navigate to the search results page
-      navigate(`/search/${searchTerm}`);
+    // Update the search history state
+    setSearchHistory(updatedHistory);
 
-      // Clear the search term
-      setSearchTerm("");
+    // Output search history to the console
+    console.log("Search History:", updatedHistory);
 
-      // Close the search history box after submitting a search
-      setIsSearchHistoryOpen(false);
-    }
-  };
+    // Navigate to the search results page
+    navigate(`/search/${searchTerm}`);
+
+    // Clear the search term
+    setSearchTerm("");
+
+    // Close the search history box after submitting a search
+    setIsSearchHistoryOpen(false);
+  }
+};
+
 
   // Function to handle clicking on a search history item
   const handleHistoryClick = (term) => {
@@ -99,6 +149,10 @@ export default function SearchBar() {
     setSearchHistory(updatedHistory);
     setCookie("searchHistory", updatedHistory.join(","), 30); // Update the cookie
   };
+
+
+
+
 
   return (
     <div style={{ position: "relative" }}>
